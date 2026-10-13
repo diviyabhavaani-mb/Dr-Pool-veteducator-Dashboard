@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pool Pathology Downloads</title>
+<meta name="description" content="Interactive analytics for Pool Pathology package downloads: trends, category and package comparisons, and e-mail impact.">
+<meta name="author" content="Diviya Bhavaani M B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+/* Layout: maroon masthead with the filter bar docked over its lower edge, then KPI strip, pill tabs and a two-column card grid. */
+:root{
+  --font-anthropic-sans:'Manrope',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  --font-anthropic-serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --cds-font-size-caption:12.5px;--cds-font-size-body:14px;--cds-font-size-heading:16px;--cds-font-size-title:30px;--cds-font-weight-medium:650;
+  --cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:16px;--cds-gap-lg:24px;--cds-gap-xl:36px;
+  --cds-pad-xs:5px;--cds-pad-sm:9px;--cds-pad-md:16px;--cds-pad-lg:22px;--cds-pad-xl:32px;
+  --cds-radius:12px;--cds-dur-slow:.35s;--cds-ease-out:cubic-bezier(.2,.7,.2,1);
+
+  /* light */
+  --color-bg:#f3f2f4;--color-panel:#ffffff;--color-fg:#1c1a1f;--color-fg-muted:#625d68;--color-border-line:#e6e3e8;
+  --color-ok:#1d7a45;--color-warn:#9a6400;--color-bad:#b3261e;
+  --ok-tint:#e3f3ea;--bad-tint:#fbe7e5;
+  --cds-chart-grid:#efedf0;--cds-chart-axis:#c9c4cc;--cds-chart-reference:#8b8491;--cds-chart-muted:#d9d4dc;
+  --cds-surface-popover:#ffffff;--cds-border:#e0dce3;--cds-text-secondary:#5a5560;
+  --cds-shadow-popover:0 10px 30px rgba(40,10,25,.16);
+  --card-shadow:0 1px 2px rgba(40,10,25,.05),0 8px 24px rgba(40,10,25,.05);
+  --hero-a:#3b0d1f;--hero-b:#6e1a37;--hero-fg:#fbf3f5;--hero-muted:#e3c9d1;--hero-line:rgba(255,255,255,.14);
+  --accent:#a32a4f;--accent-soft:#f6e6eb;
+  --s1:#a32a4f;--s2:#0a88a8;--s3:#c98300;--s4:#5164d8;--s5:#2a8c4a;--s6:#9c4fc4;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --color-bg:#121216;--color-panel:#1a1d23;--color-fg:#f1eef2;--color-fg-muted:#aba5b0;--color-border-line:#2b2e36;
+  --color-ok:#5fd08e;--color-warn:#e8b552;--color-bad:#ff8a80;--ok-tint:#123222;--bad-tint:#3a1716;
+  --cds-chart-grid:#252830;--cds-chart-axis:#4a4d57;--cds-chart-reference:#8f8a96;--cds-chart-muted:#3b3e48;
+  --cds-surface-popover:#22252d;--cds-border:#363944;--cds-text-secondary:#bdb7c2;
+  --cds-shadow-popover:0 10px 30px rgba(0,0,0,.5);--card-shadow:0 1px 2px rgba(0,0,0,.4);
+  --hero-a:#24070f;--hero-b:#4d1027;--hero-fg:#fbf3f5;--hero-muted:#d6b8c2;--hero-line:rgba(255,255,255,.12);
+  --accent:#d4567a;--accent-soft:#3a1824;
+  --s1:#d4567a;--s2:#1fa0bf;--s3:#b07a00;--s4:#7186ea;--s5:#3fa35f;--s6:#b077dc;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --color-bg:#121216;--color-panel:#1a1d23;--color-fg:#f1eef2;--color-fg-muted:#aba5b0;--color-border-line:#2b2e36;
+  --color-ok:#5fd08e;--color-warn:#e8b552;--color-bad:#ff8a80;--ok-tint:#123222;--bad-tint:#3a1716;
+  --cds-chart-grid:#252830;--cds-chart-axis:#4a4d57;--cds-chart-reference:#8f8a96;--cds-chart-muted:#3b3e48;
+  --cds-surface-popover:#22252d;--cds-border:#363944;--cds-text-secondary:#bdb7c2;
+  --cds-shadow-popover:0 10px 30px rgba(0,0,0,.5);--card-shadow:0 1px 2px rgba(0,0,0,.4);
+  --hero-a:#24070f;--hero-b:#4d1027;--hero-fg:#fbf3f5;--hero-muted:#d6b8c2;--hero-line:rgba(255,255,255,.12);
+  --accent:#d4567a;--accent-soft:#3a1824;
+  --s1:#d4567a;--s2:#1fa0bf;--s3:#b07a00;--s4:#7186ea;--s5:#3fa35f;--s6:#b077dc;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans);font-size:14px;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+.wrap{max-width:1240px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.dash-skeleton{color:transparent!important;background:color-mix(in srgb,var(--color-fg) 7%,transparent);border-radius:6px}
+
+/* masthead */
+.hero{position:relative;color:var(--hero-fg);background:
+  radial-gradient(1200px 400px at 85% -10%,rgba(255,255,255,.10),transparent 60%),
+  linear-gradient(135deg,var(--hero-a),var(--hero-b));padding-block:36px 92px;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--hero-line) 1px,transparent 1.2px);background-size:22px 22px;mask-image:linear-gradient(90deg,transparent 30%,#000 100%);-webkit-mask-image:linear-gradient(90deg,transparent 30%,#000 100%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hero-muted);font-weight:600}
+.hero h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:clamp(32px,5vw,50px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.hero .pp-take{color:var(--hero-fg);opacity:.92;font-size:15.5px;line-height:1.55;max-width:70ch}
+.hero .pp-take.dash-skeleton{background:rgba(255,255,255,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{font-size:12px;border:1px solid var(--hero-line);background:rgba(255,255,255,.07);border-radius:999px;padding:4px 11px;color:var(--hero-fg);font-variant-numeric:tabular-nums}
+
+/* filter bar docked on the masthead */
+.dock{margin-top:-60px;position:relative;z-index:2}
+.pp-filters{justify-content:flex-start;background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:16px;box-shadow:var(--cds-shadow-popover);padding:16px 18px;display:flex;flex-wrap:wrap;gap:12px 16px;align-items:end}
+.pp-field{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-fg-muted);font-weight:600}
+.pp-field input,.pp-field select,.pp-search{font:inherit;font-size:13.5px;letter-spacing:0;text-transform:none;font-weight:500;color:var(--color-fg);background:var(--color-bg);border:1px solid var(--color-border-line);border-radius:10px;padding:8px 11px;min-width:0;height:38px}
+.pp-field select{max-width:min(15rem,80vw)}
+.pp-seg{display:inline-flex;flex-wrap:wrap;gap:3px;padding:3px;background:var(--color-bg);border:1px solid var(--color-border-line);border-radius:11px}
+.pp-seg button{font:inherit;font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none;background:transparent;color:var(--color-fg-muted);border:0;border-radius:8px;padding:6px 11px;cursor:pointer;transition:background .15s,color .15s}
+.pp-seg button:hover{color:var(--color-fg)}
+.pp-seg button[aria-pressed=true]{background:var(--color-panel);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pp-btn{font:inherit;font-size:13px;font-weight:600;height:38px;padding:0 16px;border-radius:10px;border:1px solid var(--color-border-line);background:var(--color-panel);color:var(--color-fg);cursor:pointer;margin-left:auto}
+.pp-btn:hover{border-color:var(--accent);color:var(--accent)}
+.pp button:focus-visible,.pp input:focus-visible,.pp select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* body */
+.pp{font-family:var(--font-anthropic-sans);color:var(--color-fg);display:flex;flex-direction:column;gap:var(--cds-gap-lg);padding-block:24px 8px}
+.pp h2{font-size:15.5px;font-weight:700;margin:0;letter-spacing:-.005em}
+.pp p{margin:0}
+.pp .muted{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);line-height:1.5}
+.pp-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12.5rem),1fr));gap:var(--cds-gap-md)}
+.pp-kpi{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:14px;box-shadow:var(--card-shadow);padding:18px 18px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pp-kpi .lab{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--color-fg-muted);font-weight:600}
+.pp-kpi .val{font-family:var(--font-anthropic-serif);font-weight:400;font-size:34px;font-variant-numeric:tabular-nums lining-nums;line-height:1.1;overflow-wrap:anywhere;letter-spacing:-.01em}
+.pp-kpi .val.small{font-family:var(--font-anthropic-sans);font-size:15px;font-weight:700;line-height:1.3}
+.pp-kpi .sub{font-size:12px;color:var(--color-fg-muted);font-variant-numeric:tabular-nums;line-height:1.45}
+.pp-kpi .sub.up,.pp-kpi .sub.down{align-self:flex-start;border-radius:999px;padding:2px 9px;font-weight:600}
+.pp-kpi .sub.up{background:var(--ok-tint)} .pp-kpi .sub.down{background:var(--bad-tint)}
+.pp-kpi .sub.up::before{content:"▲ ";font-size:9px} .pp-kpi .sub.down::before{content:"▼ ";font-size:9px}
+.pp .up{color:var(--color-ok)} .pp .down{color:var(--color-bad)}
+
+.pp-tabs{display:inline-flex;align-self:flex-start;flex-wrap:wrap;gap:4px;padding:4px;background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:14px;box-shadow:var(--card-shadow);max-width:100%}
+.pp-tabs button{font:inherit;font-size:13.5px;font-weight:600;background:none;border:0;border-radius:10px;padding:9px 16px;color:var(--color-fg-muted);cursor:pointer;transition:background .15s,color .15s}
+.pp-tabs button:hover{color:var(--color-fg)}
+.pp-tabs button[aria-selected=true]{background:var(--accent);color:#fff}
+
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,30rem),1fr));gap:var(--cds-gap-md)}
+.pp-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:16px;box-shadow:var(--card-shadow);padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0;position:relative}
+.pp-card.wide{grid-column:1/-1}
+.pp-cardhead{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+.pp-chart{position:relative;min-height:280px;width:100%}
+.pp-chart.short{min-height:220px}
+.pp-chart svg{display:block;overflow:visible}
+.pp-chart text{fill:var(--color-fg-muted);font-size:11.5px;font-family:var(--font-anthropic-sans)}
+.pp-tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);border-radius:10px;box-shadow:var(--cds-shadow-popover);padding:8px 11px;font-size:12px;white-space:nowrap;z-index:5;display:flex;flex-direction:column;gap:3px;font-variant-numeric:tabular-nums}
+.pp-tip .t{color:var(--cds-text-secondary);font-weight:600}
+.pp-tip .r{display:flex;align-items:center;gap:6px}
+.pp-sw{width:10px;height:10px;border-radius:3px;flex:none}
+
+.pp-rank{display:flex;flex-direction:column;gap:2px}
+.pp-rank button{all:unset;cursor:pointer;display:grid;grid-template-columns:minmax(0,14rem) minmax(4rem,1fr) auto;gap:12px;align-items:center;padding:6px 8px;border-radius:9px}
+.pp-rank button:hover,.pp-rank button:focus-visible{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.pp-rank button[aria-pressed=true]{background:var(--accent-soft)}
+.pp-rank .nm{display:block;font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#weekday button{grid-template-columns:3rem minmax(4rem,1fr) auto;cursor:default}
+.pp-bars{display:flex;flex-direction:column;gap:3px}
+.pp-bar{height:12px;border-radius:0 6px 6px 0;min-width:2px}
+.pp-bar.prev{height:4px;background:var(--cds-chart-muted)}
+.pp-rank .nums{font-size:12px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+
+.pp-tablebox{max-height:30rem;overflow:auto;border:1px solid var(--color-border-line);border-radius:12px}
+.pp table{border-collapse:separate;border-spacing:0;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+.pp th{position:sticky;top:0;background:var(--color-panel);text-align:left;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--color-fg-muted);font-weight:700;border-bottom:1px solid var(--color-border-line);padding:0;z-index:1}
+.pp th button{all:unset;cursor:pointer;display:block;padding:10px 12px;width:100%;box-sizing:border-box}
+.pp th[aria-sort=ascending] button::after{content:" ↑"} .pp th[aria-sort=descending] button::after{content:" ↓"}
+.pp th[aria-sort=ascending],.pp th[aria-sort=descending]{color:var(--accent)}
+.pp td{padding:9px 12px;border-bottom:1px solid var(--color-border-line)}
+.pp td.n,.pp th.n{text-align:right}
+.pp th.n button{text-align:right}
+.pp tbody tr{cursor:pointer;transition:background .12s}
+.pp tbody tr:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.pp tr.sel{background:var(--accent-soft)}
+.pp tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent);font-weight:600}
+.pp-search{height:38px;min-width:min(16rem,100%);background:var(--color-bg)}
+.pp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pp-chip{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:500;background:var(--color-bg);border:1px solid var(--color-border-line);border-radius:999px;padding:4px 11px;max-width:100%}
+.pp-chip:hover{border-color:var(--accent)}
+.pp-chip span.l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp-heat{display:grid;gap:3px;font-size:12px;font-variant-numeric:tabular-nums;overflow-x:auto}
+.pp-heat .c{border-radius:6px;min-height:30px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.pp-heat .h{color:var(--color-fg-muted);display:flex;align-items:center;font-size:11.5px;font-weight:600}
+.pp-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pp-pair > div{background:var(--color-bg);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.pp-pair > div:first-child{background:var(--accent-soft)}
+.pp-pair .val{font-family:var(--font-anthropic-serif);font-size:38px;line-height:1.05;font-variant-numeric:tabular-nums lining-nums}
+.pp-pair > p{font-size:13.5px;line-height:1.5}
+.pp-fail{display:flex;align-items:center;justify-content:center;gap:6px;min-height:inherit;color:var(--color-fg-muted);font-size:12px}
+.pp-fail i{width:.375rem;height:.375rem;border-radius:50%;background:var(--color-bad)}
+
+/* footer */
+.site-foot{border-top:1px solid var(--color-border-line);margin-top:28px;padding-block:22px 34px;color:var(--color-fg-muted);font-size:12.5px;line-height:1.6}
+.site-foot .wrap{display:flex;flex-direction:column;gap:6px}
+.site-foot strong{color:var(--color-fg);font-weight:700}
+.site-foot .stack{font-size:11.5px;opacity:.9}
+@media (prefers-reduced-motion: no-preference){
+  .pp-card,.pp-kpi{animation:rise .5s var(--cds-ease-out) both}
+  @keyframes rise{from{transform:translateY(6px);opacity:.0}to{transform:none;opacity:1}}
+}
+@media (max-width:560px){
+  .pp-rank button{grid-template-columns:minmax(0,8rem) minmax(3rem,1fr) auto}
+  .pp-pair{grid-template-columns:1fr}
+  .pp-btn{margin-left:0}
+  .hero{padding-block:28px 84px}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Center for Educational Technologies · Pool Pathology analytics</span>
+    <h1 id="title">Pool Pathology downloads</h1>
+    <p class="pp-take dash-skeleton" id="takeaway">—</p>
+    <div class="chips"><span class="chip" id="chip-range">—</span><span class="chip" id="chip-total">—</span><span class="chip" id="chip-pk">—</span></div>
+  </div>
+</header>
+
+<main class="wrap pp" id="top">
+  <div class="dock">
+    <div class="pp-filters" id="filters">
+      <div class="pp-field"><span>Quick range</span>
+        <div class="pp-seg" id="presets">
+          <button type="button" data-p="all">All time</button>
+          <button type="button" data-p="2026">2026</button>
+          <button type="button" data-p="2025">2025</button>
+          <button type="button" data-p="90">Last 90 days</button>
+          <button type="button" data-p="new">Since 7/29 report</button>
+        </div>
+      </div>
+      <label class="pp-field" for="f-start"><span>From</span><input id="f-start" type="date" min="2021-01-01" max="2099-12-31"></label>
+      <label class="pp-field" for="f-end"><span>To</span><input id="f-end" type="date" min="2021-01-01" max="2099-12-31"></label>
+      <label class="pp-field" for="f-cat"><span>Category</span><select id="f-cat"></select></label>
+      <button type="button" class="pp-btn" id="f-reset">Reset filters</button>
+    </div>
+  </div>
+
+  <div class="pp-kpis" id="kpis">
+    <div class="pp-kpi" id="k-total"><span class="lab">Downloads</span><span class="val dash-skeleton">—</span><span class="sub">—</span></div>
+    <div class="pp-kpi" id="k-pk"><span class="lab">Packages downloaded</span><span class="val dash-skeleton">—</span><span class="sub">—</span></div>
+    <div class="pp-kpi" id="k-avg"><span class="lab">Avg per active day</span><span class="val dash-skeleton">—</span><span class="sub">—</span></div>
+    <div class="pp-kpi" id="k-busy"><span class="lab">Busiest day</span><span class="val dash-skeleton">—</span><span class="sub">—</span></div>
+    <div class="pp-kpi" id="k-top"><span class="lab">Top package</span><span class="val small dash-skeleton">—</span><span class="sub">—</span></div>
+  </div>
+
+  <div class="pp-tabs" role="tablist" id="tabs">
+    <button type="button" role="tab" data-tab="trend" id="tab-trend">Trend</button>
+    <button type="button" role="tab" data-tab="categories" id="tab-categories">Compare categories</button>
+    <button type="button" role="tab" data-tab="packages" id="tab-packages">Compare packages</button>
+    <button type="button" role="tab" data-tab="patterns" id="tab-patterns">Patterns &amp; e-mail impact</button>
+  </div>
+
+  <section id="trend" class="pp-grid" role="tabpanel">
+    <div class="pp-card wide" id="card-trend">
+      <div class="pp-cardhead">
+        <div><h2>Downloads over time</h2><p class="muted" id="trend-note">Dashed lines mark Bone Path (BP) e-mail send dates.</p></div>
+        <div class="pp-seg" id="grain">
+          <button type="button" data-g="auto">Auto</button><button type="button" data-g="day">Day</button><button type="button" data-g="week">Week</button><button type="button" data-g="month">Month</button>
+        </div>
+      </div>
+      <div class="pp-chart dash-skeleton" id="chart-trend"></div>
+    </div>
+    <div class="pp-card wide" id="card-cum">
+      <div><h2>Running total</h2><p class="muted">Cumulative downloads across the selected range.</p></div>
+      <div class="pp-chart short dash-skeleton" id="chart-cum"></div>
+    </div>
+  </section>
+
+  <section id="categories" class="pp-grid" role="tabpanel" hidden>
+    <div class="pp-card" id="card-rank">
+      <div><h2>Categories ranked</h2><p class="muted" id="rank-note">Thick bar: selected range. Thin bar: the period of equal length just before it. Click a category to filter the whole dashboard.</p></div>
+      <div class="pp-rank" id="rank"></div>
+    </div>
+    <div class="pp-card" id="card-catyear">
+      <div><h2>Category by year</h2><p class="muted">Downloads per calendar year inside the selected range. Darker means more.</p></div>
+      <div class="pp-heat" id="catyear"></div>
+    </div>
+    <div class="pp-card wide" id="card-catline">
+      <div class="pp-cardhead"><div><h2>Top categories over time</h2><p class="muted">The six largest categories in the range, per month.</p></div></div>
+      <div class="pp-chart dash-skeleton" id="chart-catline"></div>
+    </div>
+  </section>
+
+  <section id="packages" class="pp-grid" role="tabpanel" hidden>
+    <div class="pp-card wide" id="card-cmp">
+      <div class="pp-cardhead">
+        <div><h2>Package comparison</h2><p class="muted" id="cmp-note">Pick up to six packages from the table below.</p></div>
+        <div class="pp-seg" id="cmpmode"><button type="button" data-m="period">Per period</button><button type="button" data-m="cum">Cumulative</button></div>
+      </div>
+      <div class="pp-chips" id="chips"></div>
+      <div class="pp-chart dash-skeleton" id="chart-cmp"></div>
+    </div>
+    <div class="pp-card wide" id="card-pktable">
+      <div class="pp-cardhead"><div><h2>All packages</h2><p class="muted">Click a row to add or remove it from the comparison. Click a header to sort.</p></div>
+        <input class="pp-search" id="pk-search" type="search" placeholder="Search packages or categories" aria-label="Search packages"></div>
+      <div class="pp-tablebox"><table id="pktable">
+        <thead><tr><th data-k="package"><button type="button">Package</button></th><th data-k="category"><button type="button">Category</button></th><th class="n" data-k="n"><button type="button">Downloads</button></th><th class="n" data-k="share"><button type="button">Share</button></th><th class="n" data-k="prev"><button type="button">Prior period</button></th><th class="n" data-k="chg"><button type="button">Change</button></th></tr></thead>
+        <tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="patterns" class="pp-grid" role="tabpanel" hidden>
+    <div class="pp-card" id="card-email">
+      <div><h2>E-mail impact</h2><p class="muted" id="email-note">Average daily downloads in the 7 days after a BP e-mail, against all other days between the first and last e-mail.</p></div>
+      <div class="pp-pair" id="email"></div>
+    </div>
+    <div class="pp-card" id="card-wd">
+      <div><h2>Day of week</h2><p class="muted">Average downloads per calendar day, by weekday.</p></div>
+      <div class="pp-rank" id="weekday"></div>
+    </div>
+    <div class="pp-card wide" id="card-heat">
+      <div><h2>Month by year</h2><p class="muted">Downloads per month. Hover a cell for the exact count.</p></div>
+      <div class="pp-heat" id="heat"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>Source: Cumulative Pool Pathology report (AllDownloads tab), __FIRST_DAY__ through __LAST_DAY__. Categories follow the category totals on that report’s PkgID-Name-Count tab.</span>
+    <span>Created by <strong>Diviya Bhavaani M B</strong>, Graduate Assistant, Center for Educational Technologies.</span>
+    <span class="stack">Tech stack: HTML5 · CSS3 · vanilla JavaScript · D3.js v7 · Python (openpyxl) data pipeline from Excel exports · single static file, no server.</span>
+  </div>
+</footer>
+
+<script>/*__D3__*/</script>
+<script>
+window.dash = (function () {
+  var C = /*__DATA__*/;
+  var DATA = {
+    downloads: C.rows.map(function (r) { return { day: C.days[r[0]], package_id: r[1], downloads: r[2] }; }),
+    packages: C.packages,
+    emails: C.emails
+  };
+  var DEF = { start: null, end: null, cat: null, tab: 'trend', grain: 'auto', cmp: 'period', pkgs: [], preset: null };
+  var params = Object.assign({}, DEF), subs = [], raf = 0, lastW = 0;
+  function run() { subs.forEach(function (f) { try { f(); } catch (e) { console.error(e); } }); }
+  function sched() { cancelAnimationFrame(raf); raf = requestAnimationFrame(run); }
+  window.addEventListener('resize', function () { var w = document.documentElement.clientWidth; if (w !== lastW) { lastW = w; sched(); } });
+  return {
+    colors: [1, 2, 3, 4, 5, 6].map(function (i) { return 'var(--s' + i + ')'; }),
+    data: function (id) { return { status: 'ok', data: DATA[id], refreshing: false, meta: [] }; },
+    onData: function (fn) { subs.push(fn); fn(); },
+    params: function () { return Object.assign({}, params); },
+    setParams: function (o) { Object.assign(params, o); sched(); },
+    resetParams: function () { params = Object.assign({}, DEF); sched(); },
+    setLink: function (n) { try { history.replaceState(null, '', '#' + n); } catch (e) {} },
+    refresh: function () {}, calc: function () {}
+  };
+})();
+</script>
+<script>
+/*__APP__*/
+</script>
+<script>
+(function () {
+  var d = window.dash.data('downloads').data, pk = window.dash.data('packages').data;
+  var f = d3.format(','), fd = d3.utcFormat('%b %-d, %Y'), p = d3.utcParse('%Y-%m-%d');
+  var days = d.map(function (r) { return r.day; }).sort();
+  document.getElementById('chip-range').textContent = 'Data ' + fd(p(days[0])) + ' – ' + fd(p(days[days.length - 1]));
+  document.getElementById('chip-total').textContent = f(d3.sum(d, function (r) { return r.downloads; })) + ' downloads all time';
+  document.getElementById('chip-pk').textContent = f(pk.length) + ' packages · ' + f(new Set(pk.map(function (x) { return x.category; })).size) + ' categories';
+})();
+</script>
+</body>
+</html>
