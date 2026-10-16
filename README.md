@@ -1,5 +1,7 @@
 # Pool Pathology Downloads Dashboard
 
+Click Here to view the Dashboard : https://diviyabhavaani-mb.github.io/Dr-Pool-veteducator-Dashboard/ 
+
 An interactive analytics dashboard for **Pool Pathology** package downloads. It shows how teaching packages (lectures, seminars, case studies and templates) are used over time, lets you compare categories and individual packages, and measures how much the Bone Path (BP) e-mail campaigns lifted downloads.
 
 The whole dashboard is **one static HTML file** (`index.html`). The page, styles, charting library and data are all inside it, so it opens offline with a double-click and can be hosted free on GitHub Pages or any static host. No server or database is needed.
@@ -121,7 +123,7 @@ Any static host works the same way: Netlify (drag-and-drop the folder), Cloudfla
 | Charts | [D3.js v7](https://d3js.org) for scales, axes, line, area and bar marks, and interactive tooltips |
 | Typography | Newsreader (display) and Manrope (interface) from Google Fonts, with system-font fallbacks for offline use |
 | Data pipeline | Python 3 with [openpyxl](https://openpyxl.readthedocs.io), reading the Excel report and emitting compact JSON |
-| Hosting | A single static file. GitHub Pages or any static host, no backend |
+| Hosting | A single static file. GitHub Pages or any static host https://diviyabhavaani-mb.github.io/Dr-Pool-veteducator-Dashboard/ , no backend |
 
 How it works: `build_dashboard.py` reads the workbook, maps each package to its category, aggregates downloads by day and package, and writes the template with D3, the app code and the data inlined. In the browser, `app.js` filters and aggregates the rows on every interaction and redraws the charts with D3. This takes milliseconds for about 18,000 aggregated rows.
 
